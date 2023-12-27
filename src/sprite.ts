@@ -1,4 +1,4 @@
-import {Vector, Vector2D} from './data/types';
+import {Vector, Vector2D} from './data';
 
 export interface ISpriteOption{
     ctx: CanvasRenderingContext2D,
@@ -9,7 +9,7 @@ export interface ISpriteOption{
     width?:number,
     height?: number,
     numFrames?: number,
-    offset?:Vector2D,
+    spriteOffset?:Vector2D,
     delay?: number,    
 }
 
@@ -20,39 +20,62 @@ export default class Sprite implements ISpriteOption {
     width: number;
     height: number;
     numFrames: number;
-    offset: Vector2D;
+    spriteOffset: Vector2D;
     delay: number;
     image: HTMLImageElement;
     framesElapsed = 0;
     framesCount = 0;
 
-    constructor({ctx, image, position = {x:0, y:0}, scale=1, width, height, numFrames=1, offset = {x:0, y:0}, delay = 2} : ISpriteOption){
+    centerOffset: Vector;
+
+    color = 'black';
+    scaledWidth: number;
+    scaledHeight: number;
+
+    constructor({ctx, image, position = {x:100, y:100}, scale=1, width, height, numFrames=1, spriteOffset: spriteOffset = {x:0, y:0}, delay = 2} : ISpriteOption){
         this.ctx = ctx;
         this.position = new Vector(position.x, position.y);
         this.image = image;
 
-        this.scale = scale;
-
         this.width = width ?? this.image.width;
         this.height = height ?? this.image.height;
 
-        this.offset = offset;
+        this.scale = scale;
+        this.scaledWidth =  this.width * scale;
+        this.scaledHeight = this.height * scale;
+
+        this.centerOffset = new Vector(this.width / 2 * scale, this.height / 2 * scale);
+
+        //this.position.sub(...this.centerOffset.components);
+
+        this.spriteOffset = spriteOffset;
         this.numFrames = numFrames;
         this.delay = delay;
     }
 
+
     draw(){
+        this.ctx.fillStyle = this.color;
+        this.ctx.strokeRect(
+            this.position.x - this.centerOffset.x, 
+            this.position.y - this.centerOffset.y, 
+            this.scaledWidth, 
+            this.scaledHeight
+        );
+
         this.ctx.drawImage(
             this.image, 
-            this.offset.x + this.framesCount * this.width,
-            this.offset.y,
+            this.spriteOffset.x + this.framesCount * this.width,
+            this.spriteOffset.y,
             this.width,
             this.height,
-            this.position.x, 
-            this.position.y,
-            this.width * this.scale,
-            this.height * this.scale
+            this.position.x - this.centerOffset.x, 
+            this.position.y - this.centerOffset.y,
+            this.scaledWidth,
+            this.scaledHeight
         );
+
+        this.ctx.fillRect(this.position.x, this.position.y, 5, 5);
     }
 
     animate(){

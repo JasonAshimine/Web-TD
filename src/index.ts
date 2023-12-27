@@ -1,24 +1,22 @@
-import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import Sprite from './sprite';
-import {Dim, Vector, Vector2D} from './data/types';
+import {Dim, ISpriteData, Vector2D} from './data';
 import Creature from './creature';
 
-export interface ISpriteData extends Dim{
-    name: string,
-    offset: Vector2D,
-    count: number
-}
+
+import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
+import MapData from './data/Map.json' assert {type: 'json'};
+
 
 
 interface Data extends Dim{
     ctx?: CanvasRenderingContext2D,
     player?: Sprite,
-    sprites: Sprite[],
+    sprites: (Creature|Sprite)[],
 }
 
 const DATA: Data = {
-    width: 1024,
-    height: 500,
+    width: 512,
+    height: 512,
     sprites: [],
 };
 
@@ -27,19 +25,7 @@ let clear = () => {};
 const SpriteSheet = new Image();
 SpriteSheet.src = 'img/DungeonTilesetII_v1.6.png';
 
-
 document.addEventListener("DOMContentLoaded", start);
-document.addEventListener("mousemove", handleMouseMove);
-
-
-let movement:Vector2D = {x:0, y:0};
-let mouse:Vector2D = {x:0, y:0};
-
-function handleMouseMove(event:MouseEvent){
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
-}
-
 
 function getContext(selector:string, {width = 1024, height = 500}) : CanvasRenderingContext2D {
     const canvas: HTMLCanvasElement | null = document.querySelector(selector);
@@ -51,6 +37,18 @@ function getContext(selector:string, {width = 1024, height = 500}) : CanvasRende
     return canvas.getContext('2d')!;
 }
 
+/*
+Tower Defense.
+Sprite render.
+pathing: waypoint movement
+
+Map Tower Enemy
+trigger range
+
+tower range, attack
+Gold build waves
+*/
+
 
 
 function start(){
@@ -59,51 +57,86 @@ function start(){
         return;
     }
     
-    const ctxBG = getContext('#background', DATA);
-    ctxBG.fillStyle = 'grey';
-    ctxBG.fillRect(0, 0 , ctxBG.canvas.width, ctxBG.canvas.height);
+    genBackground();
+    genMain();   
 
+    requestAnimationFrame(animate);
+}
+
+function genBackground(){
+    const ctx = getContext('#background', DATA);
+    ctx.fillStyle = 'grey';
+    
+    const image = new Image();
+    image.src = 'img/Map.png';
+
+    image.onload = () => ctx.drawImage(image,0,0);
+}
+
+function genMain(){
     const ctx = getContext('#main', DATA);
     ctx.imageSmoothingEnabled = false;
 
     DATA.ctx = ctx;
 
-    genSprite(SpriteData.big_demon_run_anim);
+    
+    Object.values(SpriteData).slice(0, 5).forEach((item, index) => {
+        let i = index % 3;
+        const r:number = 255 * (i == 0 ? 1 : 0);
+        const g:number = 255 * (i == 1 ? 1 : 0);
+        const b:number = 255 * (i == 2 ? 1 : 0);
 
-    console.log(DATA);
-    requestAnimationFrame(animate);
+        console.log(r,g,b);
+        genSprite(ctx, item, 2, `rgba(${r}, ${g}, ${b}, 1)`)
+    });
 }
 
-function genSprite(item: ISpriteData, position?:Vector2D, scale = 1){
-    const ctx = DATA.ctx!;
-    const numFrames = item.count;
+function genSprite(ctx:CanvasRenderingContext2D, item: ISpriteData, scale = 1, color = 'black'){
     const delay = 7;
 
-    DATA.sprites.push(new Creature({
+    const creature = new Creature({
         ctx,
+        path: MapData.path,
         image: SpriteSheet,
-        numFrames, 
         scale, 
-        ...item, 
+        ...item,
+        speed: 3,
         delay
-    }))
+    });
+
+    DATA.sprites.push(creature)
+    creature.color = color;
 }
 
-
-/*
-Tower Defense.
-Sprite render.
-
-Map Tower Enemy
-
-pathing
-tower range, attack
-Gold build waves
-  
-*/
+interface spawnData{
+    ctx:CanvasRenderingContext2D,
+    items: ISpriteData,
+    space: number,
+}
 
 function animate(){
     DATA.ctx?.clearRect(0, 0, DATA.width, DATA.height);
     DATA.sprites.forEach(i => i.update());
+
+    document.querySelector('#name')!.textContent = DATA.sprites[0].toString();
+
     requestAnimationFrame(animate);
+}
+
+
+function find(center:Vector2D, distance:number){
+    const x = center.x - distance;
+    const y = center.y - distance;
+    const xMax = center.x + distance;
+    const yMax = center.y + distance;
+    
+    const between = (val:number, min:number, max:number) => val >= min && val <= max;
+
+    return DATA.sprites.find(sprite => 
+        between(sprite.position.x, x, xMax) && between(sprite.position.y, y, yMax) && isWithin(sprite, center, distance)
+    );
+}
+
+function isWithin(sprite:Sprite, center:Vector2D, distance:number){
+    return sprite.position.distance(center.x, center.y) < distance;
 }
