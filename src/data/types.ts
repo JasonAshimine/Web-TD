@@ -26,4 +26,10 @@ export interface IMapData{
 }
 
 
+export interface IDamagable {
+    health?: number,
+    damage: (v:number) => void
+}
+
+export type EventCB<T> = (obj:T) => void;
 

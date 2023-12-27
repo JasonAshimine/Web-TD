@@ -2,11 +2,8 @@ import Sprite from './sprite';
 import {Dim, ISpriteData, Vector2D} from './data';
 import Creature from './creature';
 
-
 import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import MapData from './data/Map.json' assert {type: 'json'};
-
-
 
 interface Data extends Dim{
     ctx?: CanvasRenderingContext2D,
@@ -19,8 +16,6 @@ const DATA: Data = {
     height: 512,
     sprites: [],
 };
-
-let clear = () => {};
 
 const SpriteSheet = new Image();
 SpriteSheet.src = 'img/DungeonTilesetII_v1.6.png';

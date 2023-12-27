@@ -1,4 +1,4 @@
-import { Vector, Vector2D } from './data';
+import { IDamagable, Vector, Vector2D, EventCB } from './data';
 import Sprite, {ISpriteOption} from './sprite';
 
 
@@ -9,20 +9,13 @@ interface CreatureData extends ISpriteOption{
     name: string,
 }
 
-interface IDamagable {
-    health?: number,
-    damage: (v:number) => void
-}
-
-type CreatureEventCB = (obj:Creature) => void;
-
 interface ICreatureEvent{
-    [state.dead]: CreatureEventCB[],
-    [state.done]: CreatureEventCB[],
-    [state.alive]: CreatureEventCB[]
+    [state.dead]: EventCB<Creature>[],
+    [state.done]: EventCB<Creature>[],
+    [state.alive]: EventCB<Creature>[]
 }
 
-enum state{
+export enum state{
     dead = 'dead',
     alive = 'alive',
     done = 'done'
@@ -142,6 +135,6 @@ export default class Creature extends Sprite implements IDamagable{
     };
 
     static trigger(state:state, obj:Creature){ Creature.listener[state].forEach(fn => fn(obj)); }
-    static addEventListener(state:state, cb:CreatureEventCB){ Creature.listener[state].push(cb); }
-    static removeEventListener(state:state, cb:CreatureEventCB){ Creature.listener[state] = Creature.listener[state].filter(fn => fn !== cb)}
+    static addEventListener(state:state, cb:EventCB<Creature>){ Creature.listener[state].push(cb); }
+    static removeEventListener(state:state, cb:EventCB<Creature>){ Creature.listener[state] = Creature.listener[state].filter(fn => fn !== cb)}
 }
