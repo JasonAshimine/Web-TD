@@ -58,7 +58,7 @@ export default class Manager{
             if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
                 return;
 
-            this.buildingList.push(new Building({position: this.map.buildPos, size:dim, manager:this}))
+            this.buildingList.push(new Building({position: this.map.buildPos, size:dim, manager:this, radius: 150, fireRate: 5}))
             this.map.updateBuilt();
         });
 
@@ -106,8 +106,8 @@ export default class Manager{
     }
 
     updateAll(){ 
-        this.enemyList.forEach(i => i.update()); 
         this.buildingList.forEach(i => i.update()); 
+        this.enemyList.forEach(i => i.update()); 
     }
     clear(){ this.ctx.clearRect(0, 0, this.width, this.height); }
 
