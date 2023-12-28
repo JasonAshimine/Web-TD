@@ -52,12 +52,15 @@ export default class Manager{
 
 
         document.addEventListener('click', event => {
-            let size = {width: 64, height: 64};
+            let size = {width: 3, height: 3};
+            let dim = {width: 3 * 16, height: 3*16}
             
-            if(this.map.buildPos)
-                this.buildingList.push(new Building({position: this.map.buildPos, size}))
+            console.log(this.map.buildPos, this.map.buildTiles, this.map.isBuildable(size))
+            if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
+                return;
 
-            console.log(this.buildingList);
+            this.buildingList.push(new Building({position: this.map.buildPos, size:dim}))
+            this.map.updateBuilt();
         });
     }
 

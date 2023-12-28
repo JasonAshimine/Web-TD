@@ -16,7 +16,7 @@ export default class Level{
 
     mouse: Vector;
     buildPos?: Vector2D;
-    buildTiles?: TileID[];
+    buildTiles: Tile[] = [];
 
     constructor({ctx, mapData, width, height}: IMapDataOption){
         this.ctx = ctx;
@@ -44,19 +44,24 @@ export default class Level{
         window.addEventListener('mousemove', (event:MouseEvent) => {
             this.setMouse(event.clientX , event.clientY)
         });
-    }
+    }  
 
     setMouse(x: number, y: number){
         this.mouse.set(Math.floor(x / Tile.width), Math.floor(y / Tile.height))
     }
 
-    isBuildable(size:IDim){ return Array.isArray(this.canBuild(size)); }
-
-    isBuildableTile(position:Vector2D):boolean{
-        const col = this.tiles[position.x];
-        if(!col) return false;
-        return col[position.y]?.isBuildable; 
+    updateBuilt(){
+        this.buildTiles.forEach(tile => tile.isBuildable = false);
     }
+
+    getTile(position:Vector2D){ 
+        if (this.tiles[position.y] === undefined) return undefined;
+        return this.tiles[position.y][position.x];
+    }
+
+    isBuildable(size:IDim){ return this.canBuild(size); }
+
+    isBuildableTile(position:Vector2D):boolean{ return this.getTile(position)?.isBuildable ?? false; }
 
     canBuild(dim:IDim){ 
         const getStart = (val:number) => Math.ceil((val-1)/2);
@@ -72,24 +77,30 @@ export default class Level{
             y: start.y + dim.height
         };
         
-        const list = [];
+        this.buildTiles = [];
 
         for(let x = start.x; x < end.x; x++)
             for(let y = start.y; y < end.y; y++)
                 if(!this.isBuildableTile({x,y}))
                     return null;
-                else
-                    list.push(Tile.genId(x,y));
+                else{
+                    let tile = this.getTile({x,y});
+                    if(tile != undefined)
+                        this.buildTiles.push(tile);
+                }
+                    
 
         this.buildPos = Level.gridToWorldPos(start);
 
-        return list;        
+        return true;        
     }
 
     update(size = {width: 3, height: 3 }){
-        let buildArea = this.canBuild(size);
+        if(!this.canBuild(size)) return;
         
-        this.buildable.forEach(i => i.update(buildArea));
+        
+        let buildIds = this.buildTiles.map(tile => tile.id);
+        this.buildable.forEach(i => i.update(buildIds));
     }
 
     static gridToWorldPos(vector:Vector2D){
