@@ -9,10 +9,8 @@ export interface IDim {
 }
 
 
-export interface IPoints{
-    components:number[];
-}
-
+export interface IPoints{ components:number[]; }
+export interface IPosition{ position:Vector2D; }
 export interface IContext{ ctx:CanvasRenderingContext2D }
 
 interface IImage{

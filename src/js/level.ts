@@ -50,9 +50,7 @@ export default class Level{
         this.mouse.set(Math.floor(x / Tile.width), Math.floor(y / Tile.height))
     }
 
-    updateBuilt(){
-        this.buildTiles.forEach(tile => tile.isBuildable = false);
-    }
+    updateBuilt(){ this.buildTiles.forEach(tile => tile.isBuildable = false); }
 
     getTile(position:Vector2D){ 
         if (this.tiles[position.y] === undefined) return undefined;
@@ -82,7 +80,7 @@ export default class Level{
         for(let x = start.x; x < end.x; x++)
             for(let y = start.y; y < end.y; y++)
                 if(!this.isBuildableTile({x,y}))
-                    return null;
+                    return false;
                 else{
                     let tile = this.getTile({x,y});
                     if(tile != undefined)
@@ -96,8 +94,7 @@ export default class Level{
     }
 
     update(size = {width: 3, height: 3 }){
-        if(!this.canBuild(size)) return;
-        
+        if(!this.canBuild(size)) return;        
         
         let buildIds = this.buildTiles.map(tile => tile.id);
         this.buildable.forEach(i => i.update(buildIds));

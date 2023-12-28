@@ -1,6 +1,6 @@
 
 import { IMapData, ISpriteData, ISpriteSheet, Vector} from '../data';
-import Creature from './creature';
+import Creature, { state } from './creature';
 import Level from './level';
 import Building from './building'
 
@@ -50,17 +50,24 @@ export default class Manager{
 
         promisfyEvent(image, 'load').then(() => this.animate());
 
-
-        document.addEventListener('click', event => {
+        ctx.canvas.addEventListener('click', event => {
             let size = {width: 3, height: 3};
             let dim = {width: 3 * 16, height: 3*16}
             
-            console.log(this.map.buildPos, this.map.buildTiles, this.map.isBuildable(size))
+            console.log(this.map.buildPos, this.map.buildTiles, this.map.isBuildable(size), this.map.mouse)
             if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
                 return;
 
-            this.buildingList.push(new Building({position: this.map.buildPos, size:dim}))
+            this.buildingList.push(new Building({position: this.map.buildPos, size:dim, manager:this}))
             this.map.updateBuilt();
+        });
+
+
+        Creature.addEventListener(state.done, (creature) => {
+            creature.index = 0;
+            creature.position.set(creature.path[0]);
+            creature.state = state.alive;
+            creature.setNextWaypoint();
         });
     }
 

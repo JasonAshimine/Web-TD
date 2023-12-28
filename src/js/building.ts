@@ -1,18 +1,33 @@
 import { IDim, Vector2D } from "../data";
+import Creature from "./creature";
 import Manager from "./manager";
+import Projectile from "./projectile";
 
 export interface IBuildingOption{
     position: Vector2D,
-    size:IDim
+    size:IDim,
+    manager:Manager,
 }
 
 export default class Building{
     size:IDim;
     position:Vector2D;
+    center:Vector2D;
+    projectile:Projectile[] = []
+    manager:Manager;
 
-    constructor({position = {x:0, y:0}, size}:IBuildingOption){
+    constructor({position = {x:0, y:0}, size, manager}:IBuildingOption){
         this.size = size;
         this.position = position;
+        this.center = {x: position.x + size.width/2, y: position.y + size.height/2};
+        
+        this.shoot(manager.enemyList[0]);
+
+        this.manager = manager;
+    }
+
+    shoot(target:Creature){
+        this.projectile.push(new Projectile({position:this.center, target}));
     }
 
     draw(){
@@ -22,5 +37,6 @@ export default class Building{
 
     update(){
         this.draw();
+        this.projectile.forEach(i => i.update());
     }
 }

@@ -72,8 +72,6 @@ export default class Sprite implements ISpriteOption {
             this.scaledWidth,
             this.scaledHeight
         );
-
-        this.ctx.fillRect(this.position.x, this.position.y, 5, 5);
     }
 
     animate(){

@@ -58,6 +58,10 @@ export default class Vector implements IPoints{
         return this.normalize().multi(value);
     }
 
+    moveTowards(vector:Vector){
+        return this.sub(vector).normalize();
+    }
+
     //----------------------------------------------------------
     // Eval
     equals(vector:Vector2D):boolean;
