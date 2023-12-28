@@ -13,6 +13,8 @@ export interface IPoints{
     components:number[];
 }
 
+export interface IContext{ ctx:CanvasRenderingContext2D }
+
 interface IImage{
     src:string,
 }
@@ -34,8 +36,9 @@ export interface ISpriteData extends IDim{
     numFrames: number
 }
 
-export interface IMapData extends IImage{
+export interface IMapData extends IImage, IDim{
     path: Vector2D[],
+    placement: number[]
 }
 
 

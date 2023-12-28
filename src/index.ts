@@ -1,7 +1,7 @@
 import Sprite from './js/sprite';
 import {IDim, ISpriteData, Vector2D} from './data';
 import Creature from './js/creature';
-import Manager from './manager';
+import Manager from './js/manager';
 
 import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import MapData from './data/Map.json' assert {type: 'json'};
@@ -46,6 +46,7 @@ Gold build waves
 */
 
 function start(){
+    const {sprites} = SpriteData;
 
     let manager = new Manager({
         ctx: getContext('#main', DATA),
@@ -56,9 +57,17 @@ function start(){
         height: DATA.height
     });
 
-    manager.spawn(SpriteData.sprites.big_demon_run_anim)
+    
 
-    console.log(manager.spawnWave([]));
+    console.log(manager.spawnWave([
+        sprites.doc_run_anim,
+        sprites.imp_run_anim,
+        sprites.ogre_run_anim,
+        sprites.angel_run_anim,
+        sprites.chort_run_anim,
+        sprites.elf_f_run_anim,
+        sprites.wogol_run_anim
+    ]));
 
     // if(!SpriteSheet.complete){
     //     SpriteSheet.onload = start;
@@ -70,60 +79,6 @@ function start(){
 
     // requestAnimationFrame(animate);
 }
-
-function genBackground(){
-    const ctx = getContext('#background', DATA);
-    ctx.fillStyle = 'grey';
-    
-    const image = new Image();
-    image.src = 'img/Map.png';
-
-    image.onload = () => ctx.drawImage(image,0,0);
-}
-
-function genMain(){
-    const ctx = getContext('#main', DATA);
-    ctx.imageSmoothingEnabled = false;
-
-    DATA.ctx = ctx;
-    
-    Object.values(SpriteData.sprites).slice(0, 5).forEach((item, index) => {
-        let i = index % 3;
-        const r:number = 255 * (i == 0 ? 1 : 0);
-        const g:number = 255 * (i == 1 ? 1 : 0);
-        const b:number = 255 * (i == 2 ? 1 : 0);
-
-        console.log(r,g,b);
-        genSprite(ctx, item, 2, `rgba(${r}, ${g}, ${b}, 1)`)
-    });
-}
-
-function genSprite(ctx:CanvasRenderingContext2D, item: ISpriteData, scale = 1, color = 'black'){
-    const delay = 7;
-
-    const creature = new Creature({
-        ctx,
-        path: MapData.path,
-        image: SpriteSheet,
-        scale, 
-        ...item,
-        speed: 3,
-        delay
-    });
-
-    DATA.sprites.push(creature)
-    creature.color = color;
-}
-
-function animate(){
-    DATA.ctx?.clearRect(0, 0, DATA.width, DATA.height);
-    DATA.sprites.forEach(i => i.update());
-
-    document.querySelector('#name')!.textContent = DATA.sprites[0].toString();
-
-    requestAnimationFrame(animate);
-}
-
 
 function find(center:Vector2D, distance:number){
     const x = center.x - distance;
