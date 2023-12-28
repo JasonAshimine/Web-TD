@@ -62,6 +62,9 @@ export default class Manager{
             this.map.updateBuilt();
         });
 
+        Creature.addEventListener(state.dead, creature => {
+            this.enemyList = this.enemyList.filter(i => i.state == state.alive);
+        });
 
         Creature.addEventListener(state.done, (creature) => {
             creature.index = 0;
@@ -95,8 +98,8 @@ export default class Manager{
             ...this.spriteBase,
             ...item,
             path: this.path,
-            speed:3,
-            scale: 2,
+            speed: 1,
+            scale: 1,
             delay: 7,
             ...option
         })

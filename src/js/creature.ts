@@ -25,6 +25,7 @@ export enum state{
 export default class Creature extends Sprite implements IDamagable{
     speed: number;
     health: number;
+    maxHealth: number;
     
     velocity: Vector;
     movementTicks: number;
@@ -43,7 +44,10 @@ export default class Creature extends Sprite implements IDamagable{
             data.position = path[0];
         super({...data});
         this.speed = speed;
+        
         this.health = health;
+        this.maxHealth = health;
+
         this.name = name;
         this.radius = data.width ?? 30;
 
@@ -86,7 +90,7 @@ export default class Creature extends Sprite implements IDamagable{
             return this.triggerEndMove();
         }
 
-        this.position.sub(...this.velocity.components);
+        this.position.sub(this.velocity);
     }
 
     setNextWaypoint(){
@@ -117,9 +121,20 @@ export default class Creature extends Sprite implements IDamagable{
 
     draw(){
         super.draw();
+        this.ctx.fillStyle = 'black';
         this.ctx.beginPath()
         this.ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI *2);
         this.ctx.stroke();
+
+
+        //healthBar
+        this.ctx.fillStyle = 'red';
+        this.ctx.fillRect(this.center.x, this.center.y, this.scaledWidth, 5)
+
+        this.ctx.fillStyle = 'green';
+        this.ctx.fillRect(this.center.x, this.center.y, this.scaledWidth * this.health / this.maxHealth, 5);
+
+        
     }
 
 
@@ -128,7 +143,6 @@ export default class Creature extends Sprite implements IDamagable{
             return;
 
         super.update();
-        this.ctx.fillRect(this.nextWaypoint.x, this.nextWaypoint.y, 5, 5);
         this.moveTowards();
     }
 

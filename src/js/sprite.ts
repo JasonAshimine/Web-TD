@@ -30,36 +30,38 @@ export default class Sprite implements ISpriteOption {
 
     scaledWidth: number;
     scaledHeight: number;
+    center: Vector;
 
     constructor({ctx, image, position = {x:100, y:100}, scale=1, width, height, numFrames=1, spriteOffset: spriteOffset = {x:0, y:0}, delay = 2} : ISpriteOption){
         this.ctx = ctx;
         this.position = new Vector(position.x, position.y);
-        this.image = image;
 
+        this.image = image;
         this.width = width ?? this.image.width;
         this.height = height ?? this.image.height;
 
         this.scale = scale;
         this.scaledWidth =  this.width * scale;
         this.scaledHeight = this.height * scale;
-
-        this.centerOffset = new Vector(this.width / 2 * scale, this.height / 2 * scale);
+        
+        this.centerOffset = new Vector(this.scaledWidth / 2, this.scaledHeight / 2);
+        this.center = new Vector(position).sub(this.centerOffset);
 
         this.spriteOffset = spriteOffset;
         this.numFrames = numFrames;
         this.delay = delay;
     }
 
-
     draw(){
+        this.center.set(this.position).sub(this.centerOffset);
         this.ctx.drawImage(
             this.image, 
             this.spriteOffset.x + this.framesCount * this.width,
             this.spriteOffset.y,
             this.width,
             this.height,
-            this.position.x - this.centerOffset.x, 
-            this.position.y - this.centerOffset.y,
+            this.position.x - this.scaledWidth / 2, 
+            this.position.y - this.scaledHeight / 2,
             this.scaledWidth,
             this.scaledHeight
         );

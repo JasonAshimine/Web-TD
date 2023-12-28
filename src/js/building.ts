@@ -1,5 +1,5 @@
 import { IDim, Vector, Vector2D } from "../data";
-import Creature from "./creature";
+import Creature, { state } from "./creature";
 import Manager from "./manager";
 import Projectile from "./projectile";
 
@@ -34,7 +34,7 @@ export default class Building{
     }
 
     getEnemy(){
-        this.target = this.manager.enemyList.find(enemy => this.center.distance(enemy.position) < this.radius);
+        this.target = this.manager.enemyList.find(enemy => enemy.state == state.alive && this.center.distance(enemy.position) < this.radius + enemy.radius);
     }
 
     shoot(target:Creature){
@@ -55,8 +55,7 @@ export default class Building{
     update(){
         this.draw();
 
-        if(this.target && this.center.distance(this.target.position) > this.radius){
-            console.log('outofrange', this.center.distance(this.target.position));
+        if(this.target && this.center.distance(this.target.position) > this.radius + this.target.radius){
             this.target = undefined;
         }
 
@@ -70,8 +69,14 @@ export default class Building{
             const projectile = this.projectile[i];
             projectile.update();
 
-            if(projectile.distance <= projectile.target.radius)
+            if(projectile.distance <= projectile.target.radius){
                 this.projectile.splice(i, 1);
+
+                if(projectile.target.state == state.dead){
+                    this.target = undefined;
+                }
+                projectile.target.damage(1);
+            }                
         }
     }
 }
