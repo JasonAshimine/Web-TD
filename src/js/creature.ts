@@ -7,6 +7,7 @@ interface CreatureData extends ISpriteOption{
     health?: number,
     speed?:number,
     name: string,
+    radius?:number,
 }
 
 interface ICreatureEvent{
@@ -25,7 +26,7 @@ export default class Creature extends Sprite implements IDamagable{
     speed: number;
     health: number;
     
-    movement: Vector;
+    velocity: Vector;
     movementTicks: number;
     name:string;
 
@@ -33,22 +34,25 @@ export default class Creature extends Sprite implements IDamagable{
     index: number;
     nextWaypoint!: Vector2D;
 
+    radius: number;
+
     state!: state;
 
-    constructor({name, path, speed=2, health = 5, ...data} : CreatureData){
+    constructor({name, path, speed=2, health = 5, radius = 10, ...data} : CreatureData){
         if(!data.position)
             data.position = path[0];
         super({...data});
         this.speed = speed;
         this.health = health;
         this.name = name;
+        this.radius = data.width ?? 30;
 
         this.path = path;
         this.index = 0;
         this.setState(state.alive);
 
         this.setNextWaypoint();
-        this.movement = new Vector(0,0);
+        this.velocity = new Vector(0,0);
         this.movementTicks = 0;
     }
 
@@ -82,7 +86,7 @@ export default class Creature extends Sprite implements IDamagable{
             return this.triggerEndMove();
         }
 
-        this.position.sub(...this.movement.components);
+        this.position.sub(...this.velocity.components);
     }
 
     setNextWaypoint(){
@@ -94,7 +98,7 @@ export default class Creature extends Sprite implements IDamagable{
 
     triggerEndMove(){
         this.onMoveEnd();
-        this.movement.zero();
+        this.velocity.zero();
         this.onMoveStart();
     }
 
@@ -104,12 +108,20 @@ export default class Creature extends Sprite implements IDamagable{
 
     onMoveStart(){
         //setup direction velocity & get # ticks to complete
-        this.movement = this.movement.copy(this.position);
-        const length = this.movement.sub(this.nextWaypoint.x, this.nextWaypoint.y).length;
+        this.velocity = this.velocity.copy(this.position);
+        const length = this.velocity.sub(this.nextWaypoint.x, this.nextWaypoint.y).length;
         
         this.movementTicks = length / this.speed;
-        this.movement.normalize().multi(this.speed);
+        this.velocity.normalize().multi(this.speed);
     }
+
+    draw(){
+        super.draw();
+        this.ctx.beginPath()
+        this.ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI *2);
+        this.ctx.stroke();
+    }
+
 
     update(){
         if(this.state != state.alive)
@@ -124,7 +136,7 @@ export default class Creature extends Sprite implements IDamagable{
         let waypoint = `(${this.nextWaypoint.x}, ${this.nextWaypoint.y})`;
 
 
-        return `${this.state} ${this.index} ${waypoint} ${this.position} ${this.movement}`;
+        return `${this.state} ${this.index} ${waypoint} ${this.position} ${this.velocity}`;
     }
 
     //---------------------------------------

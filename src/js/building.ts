@@ -37,6 +37,13 @@ export default class Building{
 
     update(){
         this.draw();
-        this.projectile.forEach(i => i.update());
+
+        for(let i = this.projectile.length -1; i >= 0; i--){
+            const projectile = this.projectile[i];
+            projectile.update();
+
+            if(projectile.distance <= projectile.target.radius)
+                this.projectile.splice(i, 1);
+        }
     }
 }

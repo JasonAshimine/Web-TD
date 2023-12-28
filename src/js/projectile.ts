@@ -13,6 +13,8 @@ export default class Projectile{
     velocity:Vector;
     target:Creature;
     speed: number;
+
+    distance = 99;
     
     constructor({position, target, speed = 5}:IProjectileOption){
         this.position = new Vector(position);
@@ -30,7 +32,9 @@ export default class Projectile{
 
     update(){
         this.draw();
-        this.velocity.set(this.position).moveTowards(this.target.position).multi(this.speed);
+
+        this.distance = this.velocity.set(this.position).sub(this.target.position).length;
+        this.velocity.normalize().multi(this.speed);
         this.position.sub(this.velocity);
     }
 }

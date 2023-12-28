@@ -28,7 +28,6 @@ export default class Sprite implements ISpriteOption {
 
     centerOffset: Vector;
 
-    color = 'black';
     scaledWidth: number;
     scaledHeight: number;
 
@@ -53,14 +52,6 @@ export default class Sprite implements ISpriteOption {
 
 
     draw(){
-        this.ctx.fillStyle = this.color;
-        this.ctx.strokeRect(
-            this.position.x - this.centerOffset.x, 
-            this.position.y - this.centerOffset.y, 
-            this.scaledWidth, 
-            this.scaledHeight
-        );
-
         this.ctx.drawImage(
             this.image, 
             this.spriteOffset.x + this.framesCount * this.width,
