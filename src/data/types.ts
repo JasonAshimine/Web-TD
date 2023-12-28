@@ -3,25 +3,38 @@ export interface Vector2D{
     y: number
 }
 
-export interface Dim {
+export interface IDim {
     width: number;
     height: number;
 }
 
 
-export interface points{
+export interface IPoints{
     components:number[];
 }
 
+interface IImage{
+    src:string,
+}
 
-export interface ISpriteData extends Dim{
+
+export interface ISpriteSheet extends IImage{
+    sprites: Sprites
+}
+
+
+interface Sprites {
+    [key: string]: ISpriteData;
+}
+  
+
+export interface ISpriteData extends IDim{
     name: string,
     spriteOffset: Vector2D,
     numFrames: number
 }
 
-export interface IMapData{
-    src:string,
+export interface IMapData extends IImage{
     path: Vector2D[],
 }
 

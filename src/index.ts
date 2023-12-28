@@ -1,11 +1,12 @@
-import Sprite from './sprite';
-import {Dim, ISpriteData, Vector2D} from './data';
-import Creature from './creature';
+import Sprite from './js/sprite';
+import {IDim, ISpriteData, Vector2D} from './data';
+import Creature from './js/creature';
+import Manager from './manager';
 
 import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import MapData from './data/Map.json' assert {type: 'json'};
 
-interface Data extends Dim{
+interface Data extends IDim{
     ctx?: CanvasRenderingContext2D,
     player?: Sprite,
     sprites: (Creature|Sprite)[],
@@ -44,18 +45,30 @@ tower range, attack
 Gold build waves
 */
 
-
-
 function start(){
-    if(!SpriteSheet.complete){
-        SpriteSheet.onload = start;
-        return;
-    }
-    
-    genBackground();
-    genMain();   
 
-    requestAnimationFrame(animate);
+    let manager = new Manager({
+        ctx: getContext('#main', DATA),
+        ctxBG: getContext('#background', DATA),
+        mapData: MapData,
+        spriteData: SpriteData,
+        width: DATA.width,
+        height: DATA.height
+    });
+
+    manager.spawn(SpriteData.sprites.big_demon_run_anim)
+
+    console.log(manager.spawnWave([]));
+
+    // if(!SpriteSheet.complete){
+    //     SpriteSheet.onload = start;
+    //     return;
+    // }
+    
+    // genBackground();
+    // genMain();   
+
+    // requestAnimationFrame(animate);
 }
 
 function genBackground(){
@@ -73,9 +86,8 @@ function genMain(){
     ctx.imageSmoothingEnabled = false;
 
     DATA.ctx = ctx;
-
     
-    Object.values(SpriteData).slice(0, 5).forEach((item, index) => {
+    Object.values(SpriteData.sprites).slice(0, 5).forEach((item, index) => {
         let i = index % 3;
         const r:number = 255 * (i == 0 ? 1 : 0);
         const g:number = 255 * (i == 1 ? 1 : 0);
@@ -101,12 +113,6 @@ function genSprite(ctx:CanvasRenderingContext2D, item: ISpriteData, scale = 1, c
 
     DATA.sprites.push(creature)
     creature.color = color;
-}
-
-interface spawnData{
-    ctx:CanvasRenderingContext2D,
-    items: ISpriteData,
-    space: number,
 }
 
 function animate(){

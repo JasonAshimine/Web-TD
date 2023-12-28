@@ -1,4 +1,4 @@
-import { IDamagable, Vector, Vector2D, EventCB } from './data';
+import { IDamagable, Vector, Vector2D, EventCB } from '../data';
 import Sprite, {ISpriteOption} from './sprite';
 
 
@@ -82,7 +82,7 @@ export default class Creature extends Sprite implements IDamagable{
             return this.triggerEndMove();
         }
 
-        this.position.add(...this.movement.components);
+        this.position.sub(...this.movement.components);
     }
 
     setNextWaypoint(){
@@ -121,9 +121,10 @@ export default class Creature extends Sprite implements IDamagable{
     }
 
     toString(){
-        let waypoint = `(${this.nextWaypoint.x}, ${this.nextWaypoint.y})`
+        let waypoint = `(${this.nextWaypoint.x}, ${this.nextWaypoint.y})`;
 
-        return `${this.state} ${this.index} ${waypoint}`;
+
+        return `${this.state} ${this.index} ${waypoint} ${this.position} ${this.movement}`;
     }
 
     //---------------------------------------

@@ -1,4 +1,4 @@
-import {Vector, Vector2D} from './data';
+import {Vector, Vector2D} from '../data';
 
 export interface ISpriteOption{
     ctx: CanvasRenderingContext2D,
@@ -45,8 +45,6 @@ export default class Sprite implements ISpriteOption {
         this.scaledHeight = this.height * scale;
 
         this.centerOffset = new Vector(this.width / 2 * scale, this.height / 2 * scale);
-
-        //this.position.sub(...this.centerOffset.components);
 
         this.spriteOffset = spriteOffset;
         this.numFrames = numFrames;
