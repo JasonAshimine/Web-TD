@@ -28,7 +28,7 @@ export default class Building{
         this.position = new Vector(position);
         this.center = new Vector(position).add(size.width/2, size.height/2);
         this.radius = radius;
-        this.fireRate =fireRate;
+        this.fireRate = fireRate;
 
         this.manager = manager;
     }
@@ -78,5 +78,9 @@ export default class Building{
                 projectile.target.damage(1);
             }                
         }
+    }
+
+    toString(){
+        return `${this.position} ${this.projectile.length} Target:${this.target?.name ?? '-'}`
     }
 }

@@ -119,8 +119,18 @@ export default class Manager{
         this.updateAll();
 
         this.map.update();
-        document.querySelector('#name')!.textContent = this.enemyList.join('\n');
+        
+
+        this.log();        
         requestAnimationFrame(this.animate.bind(this));
+    }
+
+    log(){
+        let text = '';
+        text += this.buildingList.join('\n') + '\n';
+        text += this.enemyList.join('\n') + '\n';
+        
+        document.querySelector('#name')!.textContent = text;
     }
 
 

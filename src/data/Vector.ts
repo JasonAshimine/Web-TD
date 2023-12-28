@@ -147,5 +147,5 @@ export default class Vector implements IPoints{
         return this.components.every((v, i) => cb(v, data[i]));
     }
 
-    toString(){ return this.components.map(i => i.toFixed(0)).join(); }
+    toString(){ return `(${this.components.map(i => i.toFixed(0)).join()})`; }
 }

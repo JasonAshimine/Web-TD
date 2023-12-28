@@ -147,10 +147,11 @@ export default class Creature extends Sprite implements IDamagable{
     }
 
     toString(){
-        let waypoint = `(${this.nextWaypoint.x}, ${this.nextWaypoint.y})`;
+        let waypoint = `Waypoint:[${this.index} (${this.nextWaypoint.x}, ${this.nextWaypoint.y})]`;
+        let health = `Health:[${this.health}/${this.maxHealth}]`;
+        let position = `Position:${this.velocity}${this.position}`;
 
-
-        return `${this.state} ${this.index} ${waypoint} ${this.position} ${this.velocity}`;
+        return `${this.name} ${health} ${this.state}\n ${waypoint}\n ${position}`;
     }
 
     //---------------------------------------
