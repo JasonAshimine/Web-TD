@@ -22,7 +22,7 @@ export default class Projectile{
     
     enabled:boolean;
 
-    constructor({position, target, speed = 5, radius = 10, damage = 1}:IProjectileOption){
+    constructor({position, target, speed = 5, radius = 5, damage = 1}:IProjectileOption){
         this.position = new Vector(position);
         this.velocity = new Vector(0,0);
         this.target = target;
@@ -35,7 +35,7 @@ export default class Projectile{
 
     checkHit(){
         if(this.distance <= this.target.radius){
-            this.target.damage(1);
+            this.target.damage(this.damage);
             this.enabled = false;
         }      
     }

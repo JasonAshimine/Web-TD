@@ -5,6 +5,7 @@ import Manager, { GameState } from './js/manager';
 
 import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import MapData from './data/Map.json' assert {type: 'json'};
+import Building from './data/Building.json' assert {type: 'json'};
 
 interface Data extends IDim{
     ctx?: CanvasRenderingContext2D,
@@ -60,6 +61,7 @@ function start(){
         ctxUI: getContext('#ui', DATA),
         mapData: MapData,
         spriteData: SpriteData,
+        buildingData: Building,
         width: DATA.width,
         height: DATA.height
     });

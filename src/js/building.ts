@@ -6,10 +6,10 @@ import Sprite, { ISpriteOption } from "./sprite";
 
 export interface IBuildingOption extends ISpriteOption{
     position: Vector2D,
-    size:IDim,
     manager:Manager,
     radius: number,
     fireRate: number,
+    damage:number,
 }
 
 export default class Building extends Sprite{
@@ -20,13 +20,15 @@ export default class Building extends Sprite{
     target?: Creature;
     fireRate: number;
     fireCD = 0;
+    damage:number;
 
-    constructor({manager, radius = 150, fireRate = 30, ...data}:IBuildingOption){
-        super(data);
+    constructor({manager, radius = 150, fireRate = 30, damage=1, ...sprite}:IBuildingOption){
+        super(sprite);
         this.radius = radius;
         this.fireRate = fireRate;
 
         this.manager = manager;
+        this.damage = damage;
     }
 
     getEnemy(){
@@ -35,14 +37,14 @@ export default class Building extends Sprite{
 
     shoot(target:Creature){
         this.fireCD = this.fireRate;
-        this.projectile.push(new Projectile({position:this.center, target}));
+        this.projectile.push(new Projectile({position:this.center, target, damage:this.damage}));
     }
 
     draw(){        
-        Manager.ctx.beginPath();
-        Manager.ctx.arc(this.center.x, this.center.y, this.radius, 0 , Math.PI * 2)
-        Manager.ctx.fillStyle = 'rgba(0,0,200,0.2)';
-        Manager.ctx.fill();
+        // Manager.ctx.beginPath();
+        // Manager.ctx.arc(this.center.x, this.center.y, this.radius, 0 , Math.PI * 2)
+        // Manager.ctx.fillStyle = 'rgba(0,0,200,0.2)';
+        // Manager.ctx.fill();
         super.draw();
     }
 
@@ -74,7 +76,7 @@ export default class Building extends Sprite{
     }
 
     toString(){
-        let fire = `[${this.fireRate} ${this.fireCD}]`;
+        let fire = `${this.damage}[${this.fireRate} ${this.fireCD} ]`;
         return `${this.position} ${this.projectile.length} ${fire} Target:${this.target?.name ?? '-'}`
     }
 }

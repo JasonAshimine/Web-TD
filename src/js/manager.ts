@@ -1,5 +1,5 @@
 
-import { IDim, IHealth, IMapData, ISpriteBase, ISpriteData, ISpriteSheet, Vector} from '../data';
+import { IBuildingData, IBuildingJSON, IDim, IHealth, IMapData, ISpriteBase, ISpriteData, ISpriteSheet, Vector} from '../data';
 import Creature, { state } from './creature';
 import Level from './level';
 import Building from './building'
@@ -8,9 +8,12 @@ import Sprite from './sprite';
 import SwitchSprite from './switchSprite';
 import UI from './ui';
 
+
+
 interface IManagerOption{
     mapData: IMapData,
     spriteData: ISpriteSheet,
+    buildingData: IBuildingJSON,
     ctx: CanvasRenderingContext2D,
     ctxBG: CanvasRenderingContext2D,
     ctxUI: CanvasRenderingContext2D,
@@ -39,6 +42,8 @@ export default class Manager{
     spriteData: ISpriteSheet;
     spriteBase: ISpriteBase;
 
+    private _buildingData: IBuildingJSON;
+
     private player: Player;
     private _UI?:UI;
 
@@ -47,13 +52,15 @@ export default class Manager{
     enemyList: Creature[] = [];
     buildingList: Building[] = [];
 
+    buildList:IBuildingData[] = [];
+
     state = GameState.level;
     level = 0;
     enabled = true;
 
     buildMode = false;
 
-    constructor({ctx, ctxBG, ctxUI, mapData, spriteData, width, height}:IManagerOption){
+    constructor({ctx, ctxBG, ctxUI, mapData, buildingData ,spriteData, width, height}:IManagerOption){
         this.spriteData = spriteData;
 
         ctx.imageSmoothingEnabled = false;
@@ -72,7 +79,9 @@ export default class Manager{
 
         this.spriteBase = {ctx, image,}
 
-        
+        this._buildingData = buildingData;
+        this.buildList.push(...Object.values(this._buildingData.tower));
+        this.map.setBuildingSelected(this.buildList[0]);
 
         promisfyEvent(image, 'load').then(() => {
             this.animate();
@@ -171,27 +180,23 @@ export default class Manager{
 //#region Build
     build(){
         if(!this.enabled) return;
-
-        let size = {width: 3, height: 3};
-        let dim = {width: 3 * 16, height: 3*16}
         let cost = 10;
         
-        if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
+        if(!this.map.canBuild() || this.map.buildPos == undefined) 
             return;
 
         if(this.player.gold < cost)
             return;
 
-        let item = Manager.spriteData.sprites.big_demon_idle_anim;
+        
+        let {sprite, ...buildData} = this._buildingData.tower.basic ;
+        let item = Manager.spriteData.sprites[sprite];
         let building = new Building({
             ...this.spriteBase,
             position: this.map.buildPos,
-            ...item,
-            size:dim, 
-            scale:1.5,
-            manager:this, 
-            radius: 150, 
-            fireRate: 60
+            ...buildData,
+            ...item,            
+            manager:this
         });
 
         this.buildingList.push(building)

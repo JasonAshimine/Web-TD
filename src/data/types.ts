@@ -22,22 +22,47 @@ interface IImage{
     src:string,
 }
 
+interface JSON<T>{
+    [key:string]:T
+}
 
 export interface ISpriteSheet extends IImage{
-    sprites: Sprites
+    sprites: JSON<ISpriteData>
 }
 
 
-interface Sprites {
-    [key: string]: ISpriteData;
-}
-  
 
 export interface ISpriteData extends IDim{
     name: string,
     spriteOffset: Vector2D,
     numFrames: number
 }
+
+
+export interface IBuildingJSON {
+    tower:JSON<IBuildingData>,
+    projectile:JSON<IProjectileData>
+}
+
+interface IProjectileData extends IWeapon{
+    speed:number,
+    radius:number,
+}
+
+interface IWeapon{
+    fireRate:number,
+    damage:number,
+}
+
+
+export interface IBuildingData extends ISpriteData, IWeapon{
+    cost:number,
+    radius: number,
+    size:IDim,
+    sprite: string,
+    delay:number,
+}
+
 
 export interface IMapData extends IImage, IDim{
     path: Vector2D[],

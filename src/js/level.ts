@@ -1,4 +1,4 @@
-import { IContext, IDim, IMapData, Vector, Vector2D } from "../data";
+import { IBuildingData, IContext, IDim, IMapData, Vector, Vector2D } from "../data";
 import Tile, { TileID } from "./tile";
 
 
@@ -18,6 +18,8 @@ export default class Level{
     buildPos?: Vector2D;
     buildTiles: Tile[] = [];
     enabled = true;
+
+    building?: IBuildingData;
 
     constructor({ctx, mapData, width, height}: IMapDataOption){
         this.ctx = ctx;
@@ -42,13 +44,17 @@ export default class Level{
 
         this.mouse = new Vector(-1, -1);
 
-        
 
         window.addEventListener('mousemove', (event:MouseEvent) => {
             const rect = this.ctx.canvas.getBoundingClientRect();
             this.setMouse(event.clientX -rect.left, event.clientY - rect.top)
         });
-    }  
+    }
+
+    setBuildingSelected(building:IBuildingData | undefined){
+        this.building = building;
+        this.enabled = this.building != undefined;
+    }
 
     setMouse(x: number, y: number){
         this.mouse.set(Math.floor(x / Tile.width), Math.floor(y / Tile.height))
@@ -65,7 +71,10 @@ export default class Level{
 
     isBuildableTile(position:Vector2D):boolean{ return this.getTile(position)?.isBuildable ?? false; }
 
-    canBuild(dim:IDim){ 
+    canBuild(dim = this.building?.size){ 
+        if(dim == undefined)
+            return false;
+
         const getStart = (val:number) => Math.ceil((val-1)/2);
 
         this.buildPos = undefined;
@@ -97,8 +106,8 @@ export default class Level{
         return true;        
     }
 
-    update(size = {width: 3, height: 3 }){
-        if(!this.enabled || !this.canBuild(size)) return;        
+    update(){
+        if(!this.enabled || !this.canBuild()) return;        
         
         let buildIds = this.buildTiles.map(tile => tile.id);
         this.buildable.forEach(i => i.update(buildIds));

@@ -1,11 +1,24 @@
 {
     "tower":{
-        "name":"Tower",
-        "width":2,
-        "height":2,
-        "radius": 150,
-        "cost": 10,
-        "fireRate": 100,
-        "damage": 1
+        "basic":{
+            "name":"Basic Tower",
+            "size":{"width":2, "height":2},
+            "cost": 10,
+            "projectile":"basic",
+            "fireRate": 30,
+            "damage": 1,
+            "speed": 5,
+            "radius": 150,         
+            "sprite": "big_demon_idle_anim",
+            "delay": 10
+        }
+    },
+    "projectile":{
+        "basic":{
+            "fireRate": 50,
+            "damage": 1,
+            "speed": 5,
+            "radius": 150
+        }
     }
 }
