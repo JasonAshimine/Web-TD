@@ -54,14 +54,15 @@ export default class Building{
 
     update(){
         this.draw();
-
+        
+        this.fireCD--;
         if(this.target && this.center.distance(this.target.position) > this.radius + this.target.radius){
             this.target = undefined;
         }
 
         if(!this.target){ this.getEnemy(); }
         
-        if(this.target && this.fireCD-- <= 0){
+        if(this.target && this.fireCD <= 0){
             this.shoot(this.target);
         }
 
@@ -69,18 +70,17 @@ export default class Building{
             const projectile = this.projectile[i];
             projectile.update();
 
-            if(projectile.distance <= projectile.target.radius){
+            if(!projectile.enabled){
                 this.projectile.splice(i, 1);
+            }
 
-                if(projectile.target.state == state.dead){
-                    this.target = undefined;
-                }
-                projectile.target.damage(1);
-            }                
+            if(!projectile.target.isAlive)
+                this.target = undefined;          
         }
     }
 
     toString(){
-        return `${this.position} ${this.projectile.length} Target:${this.target?.name ?? '-'}`
+        let fire = `[${this.fireRate} ${this.fireCD}]`;
+        return `${this.position} ${this.projectile.length} ${fire} Target:${this.target?.name ?? '-'}`
     }
 }

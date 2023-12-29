@@ -1,45 +1,66 @@
 
-import { IMapData, ISpriteData, ISpriteSheet, Vector} from '../data';
+import { IDim, IHealth, IMapData, ISpriteBase, ISpriteData, ISpriteSheet, Vector} from '../data';
 import Creature, { state } from './creature';
 import Level from './level';
 import Building from './building'
+import Player from './player';
+import Sprite from './sprite';
+import SwitchSprite from './switchSprite';
+import UI from './ui';
 
 interface IManagerOption{
     mapData: IMapData,
     spriteData: ISpriteSheet,
     ctx: CanvasRenderingContext2D,
     ctxBG: CanvasRenderingContext2D,
+    ctxUI: CanvasRenderingContext2D,
     width: number,
     height: number,
 }
 
-interface ISpriteBase{
-    image: HTMLImageElement,
-    ctx: CanvasRenderingContext2D,
-}
+
 
 function promisfyEvent(obj:Element, event:string):Promise<Event>{
     return new Promise(res => obj.addEventListener(event, res, {once:true}));
 }
 
+
+enum GameState{
+    level = 'level',
+    levelEnd = 'level end',
+    gameover = 'game over',
+}
+
 export default class Manager{
     static ctx:CanvasRenderingContext2D;
+    static ctxUI:CanvasRenderingContext2D;
+    static spriteData:ISpriteSheet;
 
     spriteData: ISpriteSheet;
     spriteBase: ISpriteBase;
 
-    map: Level;
+    private player: Player;
+    private _UI?:UI;
+
+    private map: Level;
 
     enemyList: Creature[] = [];
     buildingList: Building[] = [];
 
-    constructor({ctx, ctxBG, mapData, spriteData, width, height}:IManagerOption){
+    state = GameState.level;
+    level = 0;
+
+    constructor({ctx, ctxBG, ctxUI, mapData, spriteData, width, height}:IManagerOption){
         this.spriteData = spriteData;
 
         ctx.imageSmoothingEnabled = false;
         ctxBG.imageSmoothingEnabled = false;
 
+        this.player = new Player({health: 10});
+
         Manager.ctx = ctx;
+        Manager.ctxUI = ctxUI;
+        Manager.spriteData = spriteData;
 
         this.map = new Level({ctx:ctxBG, mapData, width, height});
 
@@ -48,30 +69,26 @@ export default class Manager{
 
         this.spriteBase = {ctx, image,}
 
-        promisfyEvent(image, 'load').then(() => this.animate());
+        
 
-        ctx.canvas.addEventListener('click', event => {
-            let size = {width: 3, height: 3};
-            let dim = {width: 3 * 16, height: 3*16}
-            
-            console.log(this.map.buildPos, this.map.buildTiles, this.map.isBuildable(size), this.map.mouse)
-            if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
-                return;
+        promisfyEvent(image, 'load').then(() => {
+            this.animate();
+            this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth});            
+        });
 
-            this.buildingList.push(new Building({position: this.map.buildPos, size:dim, manager:this, radius: 150, fireRate: 5}))
-            this.map.updateBuilt();
+        ctxUI.canvas.addEventListener('click', event => {
+            this.build();
         });
 
         Creature.addEventListener(state.dead, creature => {
-            this.enemyList = this.enemyList.filter(i => i.state == state.alive);
+            this.onCreatureDeath();
         });
 
         Creature.addEventListener(state.done, (creature) => {
-            creature.index = 0;
-            creature.position.set(creature.path[0]);
-            creature.state = state.alive;
-            creature.setNextWaypoint();
+            this.onCreatureEndPoint();
         });
+
+        this.setState(GameState.level);
     }
 
     get width(){return this.map.width;}
@@ -79,6 +96,87 @@ export default class Manager{
     get path(){return this.map.path;}
     get ctx(){return this.spriteBase.ctx;}
 
+    //#region Event Handler
+    onCreatureDeath(){ 
+        this.enemyList = this.enemyList.filter(i => i.state == state.alive);
+
+        if(this.enemyList.length == 0)
+            this.setState(GameState.levelEnd);
+    }
+
+    onCreatureEndPoint(){
+        this.damagePlayer();
+
+        this.enemyList = this.enemyList.filter(i => i.state == state.alive);
+
+        if(this.enemyList.length == 0)
+            this.setState(GameState.levelEnd);
+    }
+
+    damagePlayer(val = 1){
+        this.player.damage(val);
+        this._UI?.updateHealth(this.player.health);
+
+        if(!this.player.isAlive)
+            this.setState(GameState.gameover);
+    }
+
+
+    endGame(){
+
+    }
+
+
+    setState(state:GameState){
+        this.state = state;
+        this.onStateChange(this.state);
+    }
+
+    onStateChange(state:GameState){
+        switch(state){
+            case GameState.gameover:
+                return this.endGame();
+            case GameState.level:
+                this.createWave();
+                break;
+            case GameState.levelEnd:
+                this.level++;
+                this.setState(GameState.level);
+                break;
+        }
+    }
+    //#endregion
+
+    //#region Wave
+    createWave(){
+        let item = this.spriteData.sprites.doc_run_anim;
+        this.spawnWave(Array(this.level * 2 + 5).fill(item))
+    }
+
+    //#endregion
+
+//#region Build
+    build(){
+        let size = {width: 3, height: 3};
+        let dim = {width: 3 * 16, height: 3*16}
+        
+        if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
+            return;
+
+        let building = new Building({
+            position: this.map.buildPos, 
+            size:dim, 
+            manager:this, 
+            radius: 150, 
+            fireRate: 60
+        });
+
+        this.buildingList.push(building)
+        this.map.updateBuilt();
+    }
+//#endregion
+
+//#region Spawn
     spawnWave(items:ISpriteData[], space = 30){
         let start = this.path[0];
         let position = new Vector(start.x, start.y);
@@ -98,7 +196,7 @@ export default class Manager{
             ...this.spriteBase,
             ...item,
             path: this.path,
-            speed: 1,
+            speed: 3,
             scale: 1,
             delay: 7,
             ...option
@@ -107,28 +205,40 @@ export default class Manager{
         this.enemyList.push(creature);
         return creature;
     }
+//#endregion
+
+    //#region update / animation
+
+
 
     updateAll(){ 
         this.buildingList.forEach(i => i.update()); 
         this.enemyList.forEach(i => i.update()); 
+        
+        this.map.update();
     }
     clear(){ this.ctx.clearRect(0, 0, this.width, this.height); }
 
     animate(){
+        let animationID = requestAnimationFrame(this.animate.bind(this));
         this.clear();
-        this.updateAll();
-
-        this.map.update();
+        this.updateAll();        
         
-
         this.log();        
-        requestAnimationFrame(this.animate.bind(this));
+        
+        if(this.state == GameState.gameover){
+            cancelAnimationFrame(animationID);
+            this.clear();
+        }            
     }
 
+    //#endregion
     log(){
-        let text = '';
+        let text = this.state + '\n';
+        text += this.player + '\n';
         text += this.buildingList.join('\n') + '\n';
         text += this.enemyList.join('\n') + '\n';
+        
         
         document.querySelector('#name')!.textContent = text;
     }

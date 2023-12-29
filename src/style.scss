@@ -1,9 +1,14 @@
 
 
-#UI #background {
+canvas {
     position:absolute;
+    top:0
 }
 
-#main{
+#background {
+    position:relative;
+}
+
+.canvas-container {
     position: relative;
 }

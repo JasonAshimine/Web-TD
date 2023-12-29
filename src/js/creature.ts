@@ -1,5 +1,6 @@
 import { IDamagable, Vector, Vector2D, EventCB } from '../data';
 import Sprite, {ISpriteOption} from './sprite';
+import StateEventMixin from './stateEvent';
 
 
 interface CreatureData extends ISpriteOption{
@@ -16,13 +17,19 @@ interface ICreatureEvent{
     [state.alive]: EventCB<Creature>[]
 }
 
+
+
 export enum state{
     dead = 'dead',
     alive = 'alive',
     done = 'done'
 }
 
-export default class Creature extends Sprite implements IDamagable{
+//interface Creature extends Sprite {}
+
+
+
+class Creature extends Sprite implements IDamagable{
     speed: number;
     health: number;
     maxHealth: number;
@@ -59,6 +66,8 @@ export default class Creature extends Sprite implements IDamagable{
         this.velocity = new Vector(0,0);
         this.movementTicks = 0;
     }
+
+    get isAlive(){ return this.state == state.alive; }
 
     damage(damage: number){
         this.health -= damage;
@@ -166,3 +175,5 @@ export default class Creature extends Sprite implements IDamagable{
     static addEventListener(state:state, cb:EventCB<Creature>){ Creature.listener[state].push(cb); }
     static removeEventListener(state:state, cb:EventCB<Creature>){ Creature.listener[state] = Creature.listener[state].filter(fn => fn !== cb)}
 }
+
+export default Creature;

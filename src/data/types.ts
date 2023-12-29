@@ -13,6 +13,11 @@ export interface IPoints{ components:number[]; }
 export interface IPosition{ position:Vector2D; }
 export interface IContext{ ctx:CanvasRenderingContext2D }
 
+export interface IHealth{
+    health:number;
+    maxHealth:number;
+}
+
 interface IImage{
     src:string,
 }
@@ -40,10 +45,28 @@ export interface IMapData extends IImage, IDim{
 }
 
 
-export interface IDamagable {
-    health?: number,
+export interface IDamagable extends IHealth{
     damage: (v:number) => void
 }
 
 export type EventCB<T> = (obj:T) => void;
 
+export interface ISpriteBase{
+    image: HTMLImageElement,
+    ctx: CanvasRenderingContext2D,
+}
+
+
+
+export function applyMixins(derivedCtor: any, constructors: any[]) {
+    constructors.forEach((baseCtor) => {
+      Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
+        Object.defineProperty(
+          derivedCtor.prototype,
+          name,
+          Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
+            Object.create(null)
+        );
+      });
+    });
+  }

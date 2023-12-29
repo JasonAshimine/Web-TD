@@ -48,26 +48,43 @@ Gold build waves
 function start(){
     const {sprites} = SpriteData;
 
+
+    let ctxUI = getContext('#ui', DATA);
+
+    ctxUI.fillText("hello", 20, 20);
+    console.log(ctxUI);
+
     let manager = new Manager({
         ctx: getContext('#main', DATA),
         ctxBG: getContext('#background', DATA),
+        ctxUI: getContext('#ui', DATA),
         mapData: MapData,
         spriteData: SpriteData,
         width: DATA.width,
         height: DATA.height
     });
 
-    
+    //manager.spawnWave([sprites.doc_run_anim]);
 
-    console.log(manager.spawnWave([
-        sprites.doc_run_anim,
-        sprites.imp_run_anim,
-        sprites.ogre_run_anim,
-        sprites.angel_run_anim,
-        sprites.chort_run_anim,
-        sprites.elf_f_run_anim,
-        sprites.wogol_run_anim
-    ]));
+
+    document.addEventListener('keydown', ev => {
+        switch(ev.key){
+            case 't': manager.spawn(sprites.doc_run_anim);
+            break;
+            case 'd': manager.damagePlayer(1);
+
+        }
+    })
+
+    // console.log(manager.spawnWave([
+    //     sprites.doc_run_anim,
+    //     sprites.imp_run_anim,
+    //     sprites.ogre_run_anim,
+    //     sprites.angel_run_anim,
+    //     sprites.chort_run_anim,
+    //     sprites.elf_f_run_anim,
+    //     sprites.wogol_run_anim
+    // ]));
 
     // if(!SpriteSheet.complete){
     //     SpriteSheet.onload = start;
