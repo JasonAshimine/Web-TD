@@ -55,7 +55,7 @@ interface IWeapon{
 }
 
 
-export interface IBuildingData extends ISpriteData, IWeapon{
+export interface IBuildingData extends IWeapon{
     cost:number,
     radius: number,
     size:IDim,

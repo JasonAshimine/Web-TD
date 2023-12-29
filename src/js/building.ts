@@ -1,4 +1,4 @@
-import { IDim, Vector, Vector2D } from "../data";
+import { Vector2D } from "../data";
 import Creature, { state } from "./creature";
 import Manager from "./manager";
 import Projectile from "./projectile";
@@ -40,11 +40,7 @@ export default class Building extends Sprite{
         this.projectile.push(new Projectile({position:this.center, target, damage:this.damage}));
     }
 
-    draw(){        
-        // Manager.ctx.beginPath();
-        // Manager.ctx.arc(this.center.x, this.center.y, this.radius, 0 , Math.PI * 2)
-        // Manager.ctx.fillStyle = 'rgba(0,0,200,0.2)';
-        // Manager.ctx.fill();
+    draw(){
         super.draw();
     }
 
@@ -66,9 +62,8 @@ export default class Building extends Sprite{
             const projectile = this.projectile[i];
             projectile.update();
 
-            if(!projectile.enabled){
+            if(!projectile.enabled)
                 this.projectile.splice(i, 1);
-            }
 
             if(!projectile.target.isAlive)
                 this.target = undefined;          

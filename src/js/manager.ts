@@ -88,15 +88,15 @@ export default class Manager{
             this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth});            
         });
 
-        ctxUI.canvas.addEventListener('click', event => {
+        ctxUI.canvas.addEventListener('click', () => {
             this.build();
         });
 
-        Creature.addEventListener(state.dead, creature => {
+        Creature.addEventListener(state.dead, () => {
             this.onCreatureDeath();
         });
 
-        Creature.addEventListener(state.done, (creature) => {
+        Creature.addEventListener(state.done, () => {
             this.onCreatureEndPoint();
         });
 
@@ -128,6 +128,7 @@ export default class Manager{
 
     giveGold(val:number){
         this.player.gold += val;
+        this._UI?.updateGold(this.player.gold);
     }
 
     damagePlayer(val = 1){
@@ -145,6 +146,15 @@ export default class Manager{
 
     endGame(){
         this.enabled = false;
+
+        this.ctx.fillStyle = 'rgba(255,255,255, 0.5)';
+        this.ctx.fillRect(0,0, this.width, this.height);
+
+        this.ctx.fillStyle = 'black'
+        this.ctx.font = '30px Arial'
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillText("Game Over", this.width/2, this.height/2);
     }
 
     setState(state:GameState){
@@ -255,7 +265,7 @@ export default class Manager{
     updateAll(){ 
         this.buildingList.forEach(i => i.update()); 
         this.enemyList.forEach(i => i.update()); 
-        
+        this._UI?.update();
         this.map.update();
     }
     clear(){ this.ctx.clearRect(0, 0, this.width, this.height); }
@@ -273,9 +283,13 @@ export default class Manager{
         this.updateAll();        
     }
 
+    time = Date.now();
     //#endregion
     log(){
+        let timeDiff = Date.now() - this.time;
+        this.time = Date.now();
         let text = `${this.state} ${this.enabled}\n`;
+        text += `${timeDiff}\n`;
         text += this.player + '\n';
         text += this.buildingList.join('\n') + '\n';
         text += this.enemyList.join('\n') + '\n';

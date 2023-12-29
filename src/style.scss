@@ -2,7 +2,8 @@
 
 canvas {
     position:absolute;
-    top:0
+    top:0;
+    left: 0;
 }
 
 #background {
@@ -12,3 +13,23 @@ canvas {
 .canvas-container {
     position: relative;
 }
+
+.canvas-container div{
+    position: absolute;
+    top: 0;
+    user-select: none;
+}
+
+
+#end{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.none{
+    display: none !important;
+}
+

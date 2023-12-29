@@ -46,9 +46,9 @@ tower range, attack
 Gold build waves
 */
 
+
 function start(){
     const {sprites} = SpriteData;
-
 
     let ctxUI = getContext('#ui', DATA);
 
@@ -65,6 +65,8 @@ function start(){
         width: DATA.width,
         height: DATA.height
     });
+
+
 
     //manager.spawnWave([sprites.doc_run_anim]);
 

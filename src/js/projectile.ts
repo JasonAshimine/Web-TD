@@ -49,6 +49,7 @@ export default class Projectile{
 
     update(){
         if(!this.enabled) return;
+        if(this.target == undefined) return this.enabled = false;
         this.draw();
 
         this.distance = this.velocity.set(this.position).sub(this.target.position).length;

@@ -61,7 +61,7 @@ export default class Sprite implements ISpriteOption {
             this.width,
             this.height,
             this.position.x,
-            this.position.y,
+            this.position.y ,
             this.scaledWidth,
             this.scaledHeight
         );

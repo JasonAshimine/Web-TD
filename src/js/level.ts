@@ -1,5 +1,5 @@
 import { IBuildingData, IContext, IDim, IMapData, Vector, Vector2D } from "../data";
-import Tile, { TileID } from "./tile";
+import Tile from "./tile";
 
 
 export interface IMapDataOption extends IContext, IDim{
@@ -47,7 +47,9 @@ export default class Level{
 
         window.addEventListener('mousemove', (event:MouseEvent) => {
             const rect = this.ctx.canvas.getBoundingClientRect();
-            this.setMouse(event.clientX -rect.left, event.clientY - rect.top)
+            let x = (event.clientX - rect.left) * (this.width / rect.width);
+            let y = (event.clientY - rect.top) * (this.height / rect.height);
+            this.setMouse(x, y)
         });
     }
 

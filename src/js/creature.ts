@@ -1,6 +1,5 @@
 import { IDamagable, Vector, Vector2D, EventCB } from '../data';
 import Sprite, {ISpriteOption} from './sprite';
-import StateEventMixin from './stateEvent';
 
 
 interface CreatureData extends ISpriteOption{

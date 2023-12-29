@@ -1,4 +1,4 @@
-import { IContext, ISpriteBase } from "../data";
+import { IContext, ISpriteBase, Vector } from "../data";
 import Manager from "./manager";
 import Sprite from "./sprite";
 import SwitchSprite from "./switchSprite";
@@ -15,22 +15,37 @@ export default class UI{
 
     private _coin?:Sprite;
 
+    private offset:Vector;
+
     constructor({ctx, image, maxHealth}: IUIOption){
         this._spriteBase = {ctx, image};
+        this.offset =new Vector(0,10);
+
         this.initHealth(maxHealth);
         this.initGold();
+        this.draw();
     }
 
+    get ctx(){ return this._spriteBase.ctx; }
+
     initGold(){
+        this.offset.x += 20;
         let gold = Manager.spriteData.sprites.coin_anim;
 
         this._coin = new Sprite({
             ...this._spriteBase,
             ...gold,
-            position: {x: 10,y :10}
+            position: this.offset,
         })
 
-        this._coin.draw();
+        this.offset.x += 20;
+        this.updateGold(0);
+    }
+
+    updateGold(val = 0){
+
+
+        this.ctx.fillText(`Gold: ${val}`, 10, 20);
     }
 
     initHealth(maxHealth: number){
@@ -40,15 +55,14 @@ export default class UI{
             Manager.spriteData.sprites.ui_heart_empty
         ];
 
-        let x = 20;
-        let y = 10;
         
         for(let i = 0; i < maxHealth / 2; i++){
+            this.offset.x += 20;
+
             this._uiHealth.push(new SwitchSprite({
                 ...this._spriteBase,
-                ctx: Manager.ctxUI,
                 sprites: hearts,
-                position:{x: x += 20, y}
+                position:this.offset
             }))
         }
     }
@@ -67,6 +81,6 @@ export default class UI{
     }
 
     update(){
-        
+        //this._coin?.update();
     }
 }

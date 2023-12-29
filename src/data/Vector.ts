@@ -67,7 +67,6 @@ export default class Vector implements IPoints{
     equals(vector:Vector2D):boolean;
     equals(...args:number[]):boolean;
     equals(...args:any[]):boolean{
-        let data = Vector.convert(...args);
         return this.every(Vector.convert(...args), (a, b) => a == b);
     }
 
