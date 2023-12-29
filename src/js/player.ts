@@ -12,15 +12,17 @@ enum PlayerState{
 export default class Player implements IDamagable{
     health: number;
     maxHealth: number;
+    gold: number
     state: PlayerState;
 
-    constructor({health = 10}){
+    constructor({health = 10, gold = 10}){
         this.health = health;
         this.maxHealth = health;
 
+        this.gold = gold;
         this.state = PlayerState.alive;
     }
-    
+
     get isAlive(){ return this.state == PlayerState.alive; }
 
     setState(state:PlayerState){
@@ -34,6 +36,6 @@ export default class Player implements IDamagable{
     }
 
     toString(){
-        return `${this.health} / ${this.maxHealth} ${this.state}`;
+        return `${this.health} / ${this.maxHealth} ${this.state} ${this.gold}`;
     }
 }

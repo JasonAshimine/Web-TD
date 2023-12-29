@@ -1,7 +1,7 @@
 import Sprite from './js/sprite';
 import {IDim, ISpriteData, Vector2D} from './data';
 import Creature from './js/creature';
-import Manager from './js/manager';
+import Manager, { GameState } from './js/manager';
 
 import SpriteData from './data/DungeonTilesetII.json' assert {type: 'json'};
 import MapData from './data/Map.json' assert {type: 'json'};
@@ -66,12 +66,15 @@ function start(){
 
     //manager.spawnWave([sprites.doc_run_anim]);
 
+    
 
     document.addEventListener('keydown', ev => {
         switch(ev.key){
-            case 't': manager.spawn(sprites.doc_run_anim);
-            break;
-            case 'd': manager.damagePlayer(1);
+            case 't': return manager.spawn(sprites.doc_run_anim);
+            case 'd': return manager.damagePlayer(1);
+            case ' ': return manager.enabled ? manager.pause(): manager.unpause(); 
+            case 'g': return manager.setState(GameState.gameover); 
+
 
         }
     })

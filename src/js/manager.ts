@@ -25,7 +25,7 @@ function promisfyEvent(obj:Element, event:string):Promise<Event>{
 }
 
 
-enum GameState{
+export enum GameState{
     level = 'level',
     levelEnd = 'level end',
     gameover = 'game over',
@@ -49,6 +49,9 @@ export default class Manager{
 
     state = GameState.level;
     level = 0;
+    enabled = true;
+
+    buildMode = false;
 
     constructor({ctx, ctxBG, ctxUI, mapData, spriteData, width, height}:IManagerOption){
         this.spriteData = spriteData;
@@ -98,19 +101,24 @@ export default class Manager{
 
     //#region Event Handler
     onCreatureDeath(){ 
+        this.giveGold(1 + 1 * this.level);
+        this.cleanUpCreature();
+    }
+
+    onCreatureEndPoint(){
+        this.damagePlayer();
+        this.cleanUpCreature();
+    }
+
+    cleanUpCreature(){
         this.enemyList = this.enemyList.filter(i => i.state == state.alive);
 
         if(this.enemyList.length == 0)
             this.setState(GameState.levelEnd);
     }
 
-    onCreatureEndPoint(){
-        this.damagePlayer();
-
-        this.enemyList = this.enemyList.filter(i => i.state == state.alive);
-
-        if(this.enemyList.length == 0)
-            this.setState(GameState.levelEnd);
+    giveGold(val:number){
+        this.player.gold += val;
     }
 
     damagePlayer(val = 1){
@@ -121,11 +129,14 @@ export default class Manager{
             this.setState(GameState.gameover);
     }
 
-
-    endGame(){
-
+    setBuildMode(state:boolean){
+        this.buildMode = state;
+        this.map.enabled = state;
     }
 
+    endGame(){
+        this.enabled = false;
+    }
 
     setState(state:GameState){
         this.state = state;
@@ -134,13 +145,15 @@ export default class Manager{
 
     onStateChange(state:GameState){
         switch(state){
-            case GameState.gameover:
-                return this.endGame();
+            case GameState.gameover:                
+                this.endGame();
+                break;
             case GameState.level:
                 this.createWave();
+                this.giveGold(this.level * 10);
                 break;
             case GameState.levelEnd:
-                this.level++;
+                this.level++;                
                 this.setState(GameState.level);
                 break;
         }
@@ -157,13 +170,20 @@ export default class Manager{
 
 //#region Build
     build(){
+        if(!this.enabled) return;
+
         let size = {width: 3, height: 3};
         let dim = {width: 3 * 16, height: 3*16}
+        let cost = 10;
         
         if(!this.map.isBuildable(size) || this.map.buildPos == undefined) 
             return;
 
+        if(this.player.gold < cost)
+            return;
+
         let building = new Building({
+            ...this.spriteBase,
             position: this.map.buildPos, 
             size:dim, 
             manager:this, 
@@ -173,8 +193,24 @@ export default class Manager{
 
         this.buildingList.push(building)
         this.map.updateBuilt();
+        this.giveGold(-cost);
     }
 //#endregion
+
+    pause(){
+        if(this.state == GameState.gameover) return;
+
+        this.enabled = false;
+        this.ctx.fillStyle = 'rgba(255,255,255, 0.5)'
+        this.ctx.fillRect(0,0, this.width, this.height);
+    }
+
+    unpause(){
+        if(this.state == GameState.gameover) return;
+    
+        this.enabled = true;
+        this.animate();
+    }
 
 //#region Spawn
     spawnWave(items:ISpriteData[], space = 30){
@@ -208,9 +244,6 @@ export default class Manager{
 //#endregion
 
     //#region update / animation
-
-
-
     updateAll(){ 
         this.buildingList.forEach(i => i.update()); 
         this.enemyList.forEach(i => i.update()); 
@@ -221,20 +254,20 @@ export default class Manager{
 
     animate(){
         let animationID = requestAnimationFrame(this.animate.bind(this));
+        
+        this.log();
+
+        if(!this.enabled){
+            return cancelAnimationFrame(animationID);
+        }
+
         this.clear();
         this.updateAll();        
-        
-        this.log();        
-        
-        if(this.state == GameState.gameover){
-            cancelAnimationFrame(animationID);
-            this.clear();
-        }            
     }
 
     //#endregion
     log(){
-        let text = this.state + '\n';
+        let text = `${this.state} ${this.enabled}\n`;
         text += this.player + '\n';
         text += this.buildingList.join('\n') + '\n';
         text += this.enemyList.join('\n') + '\n';

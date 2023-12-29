@@ -1,0 +1,11 @@
+{
+    "tower":{
+        "name":"Tower",
+        "width":2,
+        "height":2,
+        "radius": 150,
+        "cost": 10,
+        "fireRate": 100,
+        "damage": 1
+    }
+}

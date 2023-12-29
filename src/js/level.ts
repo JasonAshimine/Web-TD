@@ -17,6 +17,7 @@ export default class Level{
     mouse: Vector;
     buildPos?: Vector2D;
     buildTiles: Tile[] = [];
+    enabled = true;
 
     constructor({ctx, mapData, width, height}: IMapDataOption){
         this.ctx = ctx;
@@ -41,8 +42,11 @@ export default class Level{
 
         this.mouse = new Vector(-1, -1);
 
+        
+
         window.addEventListener('mousemove', (event:MouseEvent) => {
-            this.setMouse(event.clientX , event.clientY)
+            const rect = this.ctx.canvas.getBoundingClientRect();
+            this.setMouse(event.clientX -rect.left, event.clientY - rect.top)
         });
     }  
 
@@ -94,7 +98,7 @@ export default class Level{
     }
 
     update(size = {width: 3, height: 3 }){
-        if(!this.canBuild(size)) return;        
+        if(!this.enabled || !this.canBuild(size)) return;        
         
         let buildIds = this.buildTiles.map(tile => tile.id);
         this.buildable.forEach(i => i.update(buildIds));
