@@ -2,8 +2,9 @@ import { IDim, Vector, Vector2D } from "../data";
 import Creature, { state } from "./creature";
 import Manager from "./manager";
 import Projectile from "./projectile";
+import Sprite, { ISpriteOption } from "./sprite";
 
-export interface IBuildingOption{
+export interface IBuildingOption extends ISpriteOption{
     position: Vector2D,
     size:IDim,
     manager:Manager,
@@ -11,10 +12,7 @@ export interface IBuildingOption{
     fireRate: number,
 }
 
-export default class Building{
-    size:IDim;
-    position:Vector;
-    center:Vector;
+export default class Building extends Sprite{
     projectile:Projectile[] = []
     manager:Manager;
 
@@ -23,10 +21,8 @@ export default class Building{
     fireRate: number;
     fireCD = 0;
 
-    constructor({position = {x:0, y:0}, size, manager, radius = 150, fireRate = 30}:IBuildingOption){
-        this.size = size;
-        this.position = new Vector(position);
-        this.center = new Vector(position).add(size.width/2, size.height/2);
+    constructor({manager, radius = 150, fireRate = 30, ...data}:IBuildingOption){
+        super(data);
         this.radius = radius;
         this.fireRate = fireRate;
 
@@ -42,18 +38,16 @@ export default class Building{
         this.projectile.push(new Projectile({position:this.center, target}));
     }
 
-    draw(){
-        Manager.ctx.fillStyle = 'rgba(255,0,0,1)';
-        Manager.ctx.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
-
+    draw(){        
         Manager.ctx.beginPath();
         Manager.ctx.arc(this.center.x, this.center.y, this.radius, 0 , Math.PI * 2)
-        Manager.ctx.fillStyle = 'rgba(255,0,0,0.2)';
+        Manager.ctx.fillStyle = 'rgba(0,0,200,0.2)';
         Manager.ctx.fill();
+        super.draw();
     }
 
     update(){
-        this.draw();
+        super.update();
         
         this.fireCD--;
         if(this.target && this.center.distance(this.target.position) > this.radius + this.target.radius){

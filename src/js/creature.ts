@@ -65,6 +65,8 @@ class Creature extends Sprite implements IDamagable{
         this.setNextWaypoint();
         this.velocity = new Vector(0,0);
         this.movementTicks = 0;
+
+        //this.offset.set(this.centerOffset).multi(-1);
     }
 
     get isAlive(){ return this.state == state.alive; }
@@ -121,7 +123,7 @@ class Creature extends Sprite implements IDamagable{
 
     onMoveStart(){
         //setup direction velocity & get # ticks to complete
-        this.velocity = this.velocity.copy(this.position);
+        this.velocity = this.velocity.copy(this.center);
         const length = this.velocity.sub(this.nextWaypoint.x, this.nextWaypoint.y).length;
         
         this.movementTicks = length / this.speed;
@@ -132,18 +134,16 @@ class Creature extends Sprite implements IDamagable{
         super.draw();
         this.ctx.fillStyle = 'black';
         this.ctx.beginPath()
-        this.ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI *2);
+        this.ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI *2);
         this.ctx.stroke();
 
 
         //healthBar
         this.ctx.fillStyle = 'red';
-        this.ctx.fillRect(this.center.x, this.center.y, this.scaledWidth, 5)
+        this.ctx.fillRect(this.position.x,   this.position.y - this.centerOffset.y, this.scaledWidth, 5)
 
         this.ctx.fillStyle = 'green';
-        this.ctx.fillRect(this.center.x, this.center.y, this.scaledWidth * this.health / this.maxHealth, 5);
-
-        
+        this.ctx.fillRect(this.position.x,   this.position.y - this.centerOffset.y, this.scaledWidth * this.health / this.maxHealth, 5);
     }
 
 

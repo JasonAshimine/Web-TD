@@ -10,7 +10,7 @@ export interface ISpriteOption{
     height?: number,
     numFrames?: number,
     spriteOffset?:Vector2D,
-    delay?: number,    
+    delay?: number,
 }
 
 export default class Sprite implements ISpriteOption {
@@ -45,7 +45,7 @@ export default class Sprite implements ISpriteOption {
         this.scaledHeight = this.height * scale;
         
         this.centerOffset = new Vector(this.scaledWidth / 2, this.scaledHeight / 2);
-        this.center = new Vector(position).sub(this.centerOffset);
+        this.center = new Vector(position).add(this.centerOffset);
 
         this.spriteOffset = spriteOffset;
         this.numFrames = numFrames;
@@ -53,15 +53,15 @@ export default class Sprite implements ISpriteOption {
     }
 
     draw(){
-        this.center.set(this.position).sub(this.centerOffset);
+        this.center.set(this.position).add(this.centerOffset);
         this.ctx.drawImage(
             this.image, 
             this.spriteOffset.x + this.framesCount * this.width,
             this.spriteOffset.y,
             this.width,
             this.height,
-            this.position.x - this.scaledWidth / 2, 
-            this.position.y - this.scaledHeight / 2,
+            this.position.x,
+            this.position.y,
             this.scaledWidth,
             this.scaledHeight
         );

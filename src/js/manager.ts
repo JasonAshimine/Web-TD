@@ -182,10 +182,13 @@ export default class Manager{
         if(this.player.gold < cost)
             return;
 
+        let item = Manager.spriteData.sprites.big_demon_idle_anim;
         let building = new Building({
             ...this.spriteBase,
-            position: this.map.buildPos, 
+            position: this.map.buildPos,
+            ...item,
             size:dim, 
+            scale:1.5,
             manager:this, 
             radius: 150, 
             fireRate: 60
