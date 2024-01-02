@@ -63,7 +63,8 @@ function start(){
         spriteData: SpriteData,
         buildingData: Building,
         width: DATA.width,
-        height: DATA.height
+        height: DATA.height,
+        cell:{width:16, height:16}
     });
 
 

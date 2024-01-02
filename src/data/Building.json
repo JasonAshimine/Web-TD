@@ -2,7 +2,7 @@
     "tower":{
         "basic":{
             "name":"Basic Tower",
-            "size":{"width":2, "height":2},
+            "size":{"width":3, "height":3},
             "cost": 10,
             "projectile":"basic",
             "fireRate": 30,

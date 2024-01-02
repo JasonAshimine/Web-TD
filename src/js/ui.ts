@@ -7,6 +7,7 @@ import SwitchSprite from "./switchSprite";
 export interface IUIOption extends IContext{
     image: HTMLImageElement,
     maxHealth: number,
+    manager:Manager,
 }
 
 export default class UI{
@@ -16,9 +17,11 @@ export default class UI{
     private _coin?:Sprite;
 
     private offset:Vector;
+    private _manager:Manager;
 
-    constructor({ctx, image, maxHealth}: IUIOption){
+    constructor({ctx, image, maxHealth, manager}: IUIOption){
         this._spriteBase = {ctx, image};
+        this._manager = manager;
         this.offset =new Vector(0,10);
 
         this.initHealth(maxHealth);
@@ -30,22 +33,15 @@ export default class UI{
 
     initGold(){
         this.offset.x += 20;
-        let gold = Manager.spriteData.sprites.coin_anim;
-
-        this._coin = new Sprite({
-            ...this._spriteBase,
-            ...gold,
-            position: this.offset,
-        })
-
-        this.offset.x += 20;
         this.updateGold(0);
     }
 
     updateGold(val = 0){
-
-
-        this.ctx.fillText(`Gold: ${val}`, 10, 20);
+        let x = this.offset.x;
+        let y = this.offset.y;
+        this.ctx.textBaseline = 'hanging';
+        this.ctx.clearRect(x,y, 200, 20);
+        this.ctx.fillText(`Gold: ${val}`, x, y);
     }
 
     initHealth(maxHealth: number){

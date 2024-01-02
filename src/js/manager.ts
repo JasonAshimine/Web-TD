@@ -19,6 +19,7 @@ interface IManagerOption{
     ctxUI: CanvasRenderingContext2D,
     width: number,
     height: number,
+    cell:IDim
 }
 
 
@@ -53,6 +54,12 @@ export default class Manager{
     buildingList: Building[] = [];
 
     buildList:IBuildingData[] = [];
+    selectedBuildingID:number = 0;
+
+    width:number;
+    height:number;
+
+    cell:IDim;
 
     state = GameState.level;
     level = 0;
@@ -60,17 +67,18 @@ export default class Manager{
 
     buildMode = false;
 
-    constructor({ctx, ctxBG, ctxUI, mapData, buildingData ,spriteData, width, height}:IManagerOption){
+    constructor({ctx, ctxBG, ctxUI, mapData, buildingData ,spriteData, width, height, cell}:IManagerOption){
         this.spriteData = spriteData;
 
         ctx.imageSmoothingEnabled = false;
         ctxBG.imageSmoothingEnabled = false;
-
-        this.player = new Player({health: 10});
-
         Manager.ctx = ctx;
         Manager.ctxUI = ctxUI;
         Manager.spriteData = spriteData;
+
+        this.width = width;
+        this.height = height;
+        this.cell = cell;
 
         this.map = new Level({ctx:ctxBG, mapData, width, height});
 
@@ -81,11 +89,14 @@ export default class Manager{
 
         this._buildingData = buildingData;
         this.buildList.push(...Object.values(this._buildingData.tower));
-        this.map.setBuildingSelected(this.buildList[0]);
+        this.map.setBuildingSelected(this.selectedBuilding);
 
+        this.player = new Player({health: 10, gold:10});
+        
         promisfyEvent(image, 'load').then(() => {
             this.animate();
-            this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth});            
+            this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth, manager:this});
+            this._UI.updateGold(10);          
         });
 
         ctxUI.canvas.addEventListener('click', () => {
@@ -103,10 +114,14 @@ export default class Manager{
         this.setState(GameState.level);
     }
 
-    get width(){return this.map.width;}
-    get height(){return this.map.height;}
+    get selectedBuilding(){ return this.buildList[this.selectedBuildingID]; }
+
     get path(){return this.map.path;}
     get ctx(){return this.spriteBase.ctx;}
+
+    calcScale(dim:IDim, size:IDim ={width:1, height:1} ){
+        return Math.min((this.cell.width * size.width)/dim.width, (this.cell.height*size.height)/dim.height);
+    }
 
     //#region Event Handler
     onCreatureDeath(){ 
@@ -190,22 +205,25 @@ export default class Manager{
 //#region Build
     build(){
         if(!this.enabled) return;
-        let cost = 10;
+
+        const {sprite, cost, ...buildData} = this.selectedBuilding;
+        
+        if(this.player.gold < this.selectedBuilding.cost)
+            return;
         
         if(!this.map.canBuild() || this.map.buildPos == undefined) 
             return;
 
-        if(this.player.gold < cost)
-            return;
-
-        
-        let {sprite, ...buildData} = this._buildingData.tower.basic ;
         let item = Manager.spriteData.sprites[sprite];
+        const scale = this.calcScale(item, buildData.size);
+
+        console.log(scale, item, this.cell)
         let building = new Building({
             ...this.spriteBase,
             position: this.map.buildPos,
             ...buildData,
-            ...item,            
+            ...item,
+            scale,        
             manager:this
         });
 
