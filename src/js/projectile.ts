@@ -1,4 +1,4 @@
-import { IPosition, Vector, Vector2D } from "../data";
+import { IPosition, Vector} from "../data";
 import Creature from "./creature";
 import Manager from "./manager";
 

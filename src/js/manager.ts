@@ -1,11 +1,9 @@
 
-import { IBuildingData, IBuildingJSON, IDim, IHealth, IMapData, ISpriteBase, ISpriteData, ISpriteSheet, Vector} from '../data';
+import { IBuildingData, IBuildingJSON, IDim, IMapData, ISpriteBase, ISpriteData, ISpriteSheet, Vector} from '../data';
 import Creature, { state } from './creature';
 import Level from './level';
 import Building from './building'
 import Player from './player';
-import Sprite from './sprite';
-import SwitchSprite from './switchSprite';
 import UI from './ui';
 
 
@@ -95,7 +93,7 @@ export default class Manager{
         
         promisfyEvent(image, 'load').then(() => {
             this.animate();
-            this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth, manager:this});
+            this._UI = new UI({ctx:ctxUI, image, maxHealth:this.player.maxHealth});
             this._UI.updateGold(10);          
         });
 
@@ -257,7 +255,7 @@ export default class Manager{
         offset.x = isBetween(position.x, 0, this.width) * space;
         offset.y = isBetween(position.y, 0, this.height) * space;
 
-        items.forEach((item, i) => {
+        items.forEach((item) => {
             position.add(offset);
             this.spawn(item, {position});
         });

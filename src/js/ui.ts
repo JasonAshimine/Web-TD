@@ -7,7 +7,6 @@ import SwitchSprite from "./switchSprite";
 export interface IUIOption extends IContext{
     image: HTMLImageElement,
     maxHealth: number,
-    manager:Manager,
 }
 
 export default class UI{
@@ -17,11 +16,9 @@ export default class UI{
     private _coin?:Sprite;
 
     private offset:Vector;
-    private _manager:Manager;
 
-    constructor({ctx, image, maxHealth, manager}: IUIOption){
+    constructor({ctx, image, maxHealth}: IUIOption){
         this._spriteBase = {ctx, image};
-        this._manager = manager;
         this.offset =new Vector(0,10);
 
         this.initHealth(maxHealth);

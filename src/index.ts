@@ -1,5 +1,5 @@
 import Sprite from './js/sprite';
-import {IDim, ISpriteData, Vector2D} from './data';
+import {IDim} from './data';
 import Creature from './js/creature';
 import Manager, { GameState } from './js/manager';
 
@@ -105,19 +105,19 @@ function start(){
     // requestAnimationFrame(animate);
 }
 
-function find(center:Vector2D, distance:number){
-    const x = center.x - distance;
-    const y = center.y - distance;
-    const xMax = center.x + distance;
-    const yMax = center.y + distance;
+// function find(center:Vector2D, distance:number){
+//     const x = center.x - distance;
+//     const y = center.y - distance;
+//     const xMax = center.x + distance;
+//     const yMax = center.y + distance;
     
-    const between = (val:number, min:number, max:number) => val >= min && val <= max;
+//     const between = (val:number, min:number, max:number) => val >= min && val <= max;
 
-    return DATA.sprites.find(sprite => 
-        between(sprite.position.x, x, xMax) && between(sprite.position.y, y, yMax) && isWithin(sprite, center, distance)
-    );
-}
+//     return DATA.sprites.find(sprite => 
+//         between(sprite.position.x, x, xMax) && between(sprite.position.y, y, yMax) && isWithin(sprite, center, distance)
+//     );
+// }
 
-function isWithin(sprite:Sprite, center:Vector2D, distance:number){
-    return sprite.position.distance(center.x, center.y) < distance;
-}
+// function isWithin(sprite:Sprite, center:Vector2D, distance:number){
+//     return sprite.position.distance(center.x, center.y) < distance;
+// }
