@@ -5,7 +5,7 @@
 
 ### Game play:
  - Build tower in buildable area.
- -- Cost 10 gold & is 3x3 size.
+   - Cost 10 gold & is 3x3 size.
  - Monster will automatically spawn when wave is complete (All monsters die/leave map)
  - More monsters/gold every wave 
  - You have 10 lives. i.e. can let 10 monster through.
