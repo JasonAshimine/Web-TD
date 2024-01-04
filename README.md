@@ -27,8 +27,8 @@ Vite Vanilla for development
  - Scaling enemies/gold per wave
 
 # Eventual goals to refine project.
-TODO: Refine game engine to be more modular.
-TODO: Remove debug log. 
-TODO: Add Enemy.
-TODO: Fix scalling.
-TODO: Add more Buildings / Upgrade System
+ - TODO: Refine game engine to be more modular.
+ - TODO: Remove debug log. 
+ - TODO: Add Enemy.
+ - TODO: Fix scalling.
+ - TODO: Add more Buildings / Upgrade System
