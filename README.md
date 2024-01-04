@@ -9,6 +9,8 @@
  - Monster will automatically spawn when wave is complete (All monsters die/leave map)
  - More monsters/gold every wave 
  - You have 10 lives. i.e. can let 10 monster through.
+*Can Pause game with Space*
+*Currently has debug console / some dev keys, please ignore for now* 
 
 # Goals of project
 Quick prototype for creating Web Tower defense game.
