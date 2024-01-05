@@ -1,37 +1,38 @@
 # Web-TD
  
 # How to play
- - Visit Project Page: https://jasonashimine.github.io/Web-TD/
+ - Visit Project Page: https://jasonashimine.github.io/Web-TD/
 
 ### Game play:
- - Build tower in buildable area.
-   - Cost 10 gold & is 3x3 size.
- - Monster will automatically spawn when wave is complete (All monsters die/leave map)
- - More monsters/gold every wave 
- - You have 10 lives. i.e. can let 10 monster through.
+ - Build towers in a buildable area.
+ - Cost 10 gold and 3x3 size.
+ - Monsters will automatically spawn when the wave is complete (all monsters die or leave the map).
+ - More monsters/gold every wave
+ - You have 10 lives. i.e., can let 10 monsters through.
 
-*Can Pause game with Space*
-*Currently has debug console / some dev keys, please ignore for now* 
+*You can pause the game with the "space bar."*
 
-# Goals of project
-Quick prototype for creating Web Tower defense game.
-Intial goal was to create a basic framework/workflow from scratch using: TypeScript, Vectors, Sprites, and Canvas.
-Tiled for creating map / pathway
-Vite Vanilla for development
+*Currently, it has a debug console and some dev keys; please ignore them for now.*
 
- - Created Web based tower defense game using Canvas.
- - Develop basic framework/workflow.
- - Animated Pixel sprites / towers.
- - Ai follow predetermined path.
- - Vector based movement.
- - Handle triger detection of within range.
- - Stacked Canvas for BG, Game, & UI to avoid redraws.
- - JSON data files for easier expandability. 
+### Goals of the project
+
+Quick prototype for creating a Web Tower defense game. The initial goal was to create a framework and workflow from scratch using TypeScript, Vectors, Sprites, and Canvas.
+
+Tiled for creating a map and pathway. Vite Vanilla for development.
+
+ - Produced a web-based tower defense game using Canvas.
+ - Develop a game engine framework and workflow.
+ - Animated Pixel Sprites and Towers.
+ - AI follows predetermined waypoints.
+ - Vector-based movement.
+ - Handle automatic tower attacks and trigger areas.
+ - Stacked Canvas for BG, Game, and UI to avoid redraws.
+ - JSON data files for easier expandability.
  - Scaling enemies/gold per wave
 
-# Eventual goals to refine project.
- - TODO: Refine game engine to be more modular.
- - TODO: Remove debug log. 
- - TODO: Add Enemy.
+### Eventual goals to refine the project.
+ - TODO: Refine the game engine to be more modular.
+ - TODO: Remove the debug log.
+ - TODO: Add more enemy types.
  - TODO: Fix scalling.
- - TODO: Add more Buildings / Upgrade System
+ - TODO: Add more buildings and upgrade system.
