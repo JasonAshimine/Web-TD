@@ -1,10 +1,13 @@
 # Web-TD
+
+![WebTD](https://github.com/JasonAshimine/Web-TD/assets/149907110/447d9672-62cf-400e-b656-8a1aa32b4002)
  
 # How to play
  - Visit Project Page: https://jasonashimine.github.io/Web-TD/
 
 ### Game play:
  - Build towers in a buildable area.
+
  - Cost 10 gold and 3x3 size.
  - Monsters will automatically spawn when the wave is complete (all monsters die or leave the map).
  - More monsters/gold every wave
