@@ -1,7 +1,7 @@
 # Web-TD
 
-![WebTD](https://github.com/JasonAshimine/Web-TD/assets/149907110/447d9672-62cf-400e-b656-8a1aa32b4002)
- 
+![WebTD GamePlay](https://github.com/JasonAshimine/Web-TD/assets/149907110/d7d16443-0afc-4bec-a3eb-d7661ec3da1c)
+
 # How to play
  - Visit Project Page: https://jasonashimine.github.io/Web-TD/
 
